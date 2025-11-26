@@ -1,3 +1,54 @@
-全プロセスに独立した仮想アドレス空間 を提供する。
-タスクマネージャで現在実行中のアプリケーションやプロセスを一覧表示し、応答しないプログラムを終了させたり、CPUなどのリソース使用状況を確認したりするのに使用します。
-Windows のファイルシステムは NTFS（New Technology File System） が中心で、どのドライブにどのファイルが保存されているのか見やすい特徴がある。
+メモリ管理は NT Memory Manager によって制御されている。
+タスク管理は NT Kernel のスケジューラ（Dispatcher） によって制御される。
+Windows のファイル管理は NTFS（New Technology File System） を中心としている。
+
+✅ 1. NT Memory Manager（Windows メモリ管理）
+ソース：Windows Internals（Memory Management 章）、Microsoft Learn（Memory Management）
+
+NT Memory Manager は Windows のメモリ管理を担当する中核コンポーネントで、以下を行います：
+仮想アドレス空間の管理（各プロセスに独立した 4GB / 128TB の仮想空間など）
+物理メモリの割り当てと解放
+ページング処理（物理メモリにないページをディスクから読み込む）
+Working Set 管理（プロセスがメモリ上に保持できるページ数）
+カーネルメモリの管理（Paged / NonPaged Pool）
+NUMA、メモリ圧縮、巨大ページなどの高度な機能
+
+ポイント：
+アプリはあくまで 仮想メモリ を使い、実際の物理メモリは Memory Manager が完全にコントロールする。
+
+✅ 2. NT Kernel（Windows NT カーネル）
+ソース：Windows Internals（System Architecture 章）、Microsoft Learn（Kernel Mode Drivers）
+
+NT Kernel は Windows 全体を動かす基盤で、OS の「心臓部」：
+スケジューラ（プロセス／スレッド管理）
+割り込み処理
+メモリ管理（Memory Manager と連携）
+I/O システム（ドライバの管理）
+セキュリティ（権限・トークン・オブジェクト管理）
+オブジェクトマネージャ（ファイル/プロセス/ハンドルの抽象化）
+特徴（公式仕様の通り）：
+完全な ハイブリッドカーネル（マイクロ vs モノリシックの中間）
+ユーザーモードとカーネルモードを明確に分離
+高い移植性を持つ設計（ARM, x86, x64）
+
+ポイント：
+Windows の安定性・マルチタスク・ドライバモデルすべての根幹。
+
+✅ 3. NTFS（New Technology File System）
+
+ソース：Microsoft Learn（NTFS）、Windows Internals（Storage 章）
+
+NTFS は Windows の標準ファイルシステムで、以下の特徴を持つ：
+ジャーナリング（ログに書いてから実行 → 障害耐性が高い）
+MFT（Master File Table）でメタデータ管理
+→ すべてのファイル情報（名前、サイズ、権限）をテーブルで管理
+アクセス制御（ACL）
+→ ユーザーごとの詳細権限
+巨大ファイル・巨大ボリューム対応
+ハードリンク・シンボリックリンク対応
+Sparse file（スパースファイル）対応
+暗号化（EFS）対応
+
+ポイント：
+「ファイル」と「フォルダ」も実は MFT 内の “オブジェクト”。
+高度に自己修復能力を持つ堅牢なファイルシステム。
