@@ -1,6 +1,10 @@
 メモリ管理は NT Memory Manager によって制御されている。
 タスク管理は NT Kernel のスケジューラ（Dispatcher） によって制御される。
-Windows のファイル管理は NTFS（New Technology File System） を中心としている。
+ファイル管理は NTFS（New Technology File System） を中心としている。
+
+メモリ管理、タスク管理、ファイル管理はそれぞれ
+NT Memory Manager , NT Kernel のスケジューラ（Dispatcher）, NTFS（New Technology File System）
+を使用している。
 
 ✅ 1. NT Memory Manager（Windows メモリ管理）
 ソース：Windows Internals（Memory Management 章）、Microsoft Learn（Memory Management）
